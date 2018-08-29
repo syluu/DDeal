@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Copyright © 2017 Magestore. All rights reserved.
+  ~ See COPYING.txt for license details.
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::marketing">
+                    <resource id="MW_DailyDeal::mw_dailydeal_parent" title="Daily Deal Pro" sortOrder="30">
+                        <resource id="MW_DailyDeal::mw_dailydeal_dealitems" title="Add Individual Deal" sortOrder="10"/>
+                        <resource id="MW_DailyDeal::mw_dailydeal_indexFilterRunning" title="Current Deals" sortOrder="20"/>
+                        <resource id="MW_DailyDeal::mw_dailydeal_indexFilterAll" title="All Deals" sortOrder="40"/>
+                        <resource id="MW_DailyDeal::mw_dailydeal_dailyschedule" title="Manage Deals by Day" sortOrder="50"/>
+                        <resource id="MW_DailyDeal::mw_dailydeal_dealscheduler" title="Deal Generator" sortOrder="60"/>
+                    </resource>
+                </resource>
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="MW_DailyDeal::settings" title="Daily Deal Settings"/>
+                        </resource>
+                    </resource>
+                </resource>                
+            </resource>
+        </resources>
+    </acl>
+</config>

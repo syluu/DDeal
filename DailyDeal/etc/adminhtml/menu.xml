@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="MW_DailyDeal::mw_dailydeal_parent" title="Daily Deal Pro" module="MW_DailyDeal" sortOrder="15" resource="MW_DailyDeal::dailydeal"/>
+
+        <add id="MW_DailyDeal::mw_dailydeal_dealitems" title="Add Individual Deal" module="MW_DailyDeal" sortOrder="16"  parent="MW_DailyDeal::mw_dailydeal_parent"  action="mw_dailydeal/dealitems/" resource="MW_DailyDeal::dealitems"/>
+
+        <add id="MW_DailyDeal::mw_dailydeal_indexFilterRunning" title="Current Deals" module="MW_DailyDeal" sortOrder="17"  parent="MW_DailyDeal::mw_dailydeal_parent"  action="mw_dailydeal/dealitems/indexFilterRunning" resource="MW_DailyDeal::dealitems_indexFilterRunning"/>
+
+        <add id="MW_DailyDeal::mw_dailydeal_indexFilterAll" title="All Deals" module="MW_DailyDeal" sortOrder="18"  parent="MW_DailyDeal::mw_dailydeal_parent"  action="mw_dailydeal/dealitems/indexFilterAll" resource="MW_DailyDeal::dealitems_indexFilterAll"/>
+
+        <add id="MW_DailyDeal::mw_dailydeal_dailyschedule" title="Manage Deals by Day" module="MW_DailyDeal" sortOrder="19"  parent="MW_DailyDeal::mw_dailydeal_parent"  action="mw_dailydeal/dailyschedule/" resource="MW_DailyDeal::dailyschedule"/>
+
+        <add id="MW_DailyDeal::mw_dailydeal_dealscheduler" title="Deal Generator" module="MW_DailyDeal" sortOrder="20"  parent="MW_DailyDeal::mw_dailydeal_parent"  action="mw_dailydeal/dealscheduler/" resource="MW_Ddate::dealscheduler"/>
+
+        <add id="MW_DailyDeal::mw_dailydeal_config" title="Configuration" module="MW_DailyDeal" sortOrder="21" parent="MW_DailyDeal::mw_dailydeal_parent" dependsOnModule="MW_DailyDeal"  action="adminhtml/system_config/edit/section/mw_dailydeal" resource="MW_DailyDeal::mw_dailydeal_config"/>
+    </menu>
+</config>

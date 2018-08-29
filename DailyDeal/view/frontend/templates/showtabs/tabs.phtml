@@ -1,0 +1,24 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$storeManager = $objectManager->get('\Magento\Store\Model\StoreManagerInterface');
+$baseUrl = $storeManager->getStore()->getBaseUrl();
+?>
+<table class="tab-deal">
+    <tr>
+        <td id="deal_active">
+            <a href="<?php echo $baseUrl.'dailydeal/index/index'; ?>">
+                <span><span><?php echo __('Current Deals'); ?></span></span>
+            </a>
+        </td>
+        <td id="deal_past">
+            <a href="<?php echo $baseUrl.'dailydeal/index/past'; ?>">
+                <span><span><?php echo __('Past Deals'); ?></span></span>
+            </a>
+        </td>
+        <td id="deal_comming">
+            <a href="<?php echo $baseUrl.'dailydeal/index/comming'; ?>">
+                <span><span><?php echo __('Upcoming Deals'); ?></span></span>
+            </a>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,251 @@
+<?php
+/** @var \MW\DailyDeal\Block\ProductPage $block */
+date_default_timezone_set('Asia/Ho_Chi_Minh');
+//date_default_timezone_get();
+//$timezone = date_default_timezone_get();
+//echo "The current server timezone is: " . $timezone;
+//$date = date('m/d/Y h:i:s a', time());
+////$now = now();
+////\Zend_Debug::dump(strtotime('08/13/2018 11:22:24')); //1534134144
+////\Zend_Debug::dump(strtotime('08/15/2018 11:24:24'));//1534307064
+
+//\Zend_Debug::dump($block->getConfigTodayDealShowDetail());
+// die("dddddd");
+//$remain_second = strtotime($_deal->getEndDateTime()) - Mage::getModel('core/date')->timestamp();
+$_product = $block->getCurrentProduct();
+$remain_second = 27*60*60;
+$_deal = $block->getDeals();
+$title = '';
+if ($_deal) {
+
+    $title = $block->getProductDetailLabel();
+//    $gmtcore = Mage::getSingleton('core/date')->getGmtOffset(); //var_dump($gmtcore*1000);die;
+    $currenttime = time(); //var_dump($_deal->getEndDateTime());
+    $beforetime = $currenttime - strtotime($_deal->getStartDateTime());
+    $aftertime = strtotime($_deal->getEndDateTime()) - $currenttime;
+    $timechange = (int)$block->getTimeChange();//('dailydeal/general/timechange');
+    $dealqty = $_deal->getDealQty();
+    $soldqty = $_deal->getSoldQty();
+    ?>
+    <div class="deal-product">
+        <div class="catalogproductview">
+            <?php if ($title == '') { ?>
+                <h3><?php echo __('Get it before it&acute;s gone!'); ?></h3>
+            <?php } else { ?>
+                <h3><?php echo $title; ?></h3>
+            <?php } ?>
+        </div>
+        <div class="ct-deal-pro">
+            <!-- Countdown Javascript -->
+            <div id="counter" class="counter">
+                <ul class="countdown">
+                    <li class="first">
+                        <div class="countdown_num" id="lp_day-<?php echo $_deal->getDailydealId() ?>"></div>
+                        <div id="lbl_lp_day-<?php echo $_deal->getDailydealId() ?>"></div>
+                    </li>
+                    <li>
+                        <div class="countdown_num" id="lp_hour-<?php echo $_deal->getDailydealId() ?>"></div>
+                        <div id="lbl_lp_hour-<?php echo $_deal->getDailydealId() ?>"></div>
+                    </li>
+                    <li>
+                        <div class="countdown_num" id="lp_minute-<?php echo $_deal->getDailydealId() ?>"></div>
+                        <div id="lbl_lp_minute-<?php echo $_deal->getDailydealId() ?>"></div>
+                    </li>
+                    <li class="last">
+                        <div class="countdown_num" id="lp_second-<?php echo $_deal->getDailydealId() ?>"></div>
+                        <div id="lbl_lp_second-<?php echo $_deal->getDailydealId() ?>"></div>
+                    </li>
+                </ul>
+            </div>
+            <div id="expired" style="display:none;">
+                <?php __('The deadline has passed.'); ?>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var todaydeal_server_time = {
+            second: <?php echo $remain_second; ?>,
+            callback: '',
+
+            id_day: 'lp_day-' + <?php echo $_deal->getId(); ?>,
+            id_hour: 'lp_hour-' + <?php echo $_deal->getId(); ?>,
+            id_minute: 'lp_minute-' + <?php echo $_deal->getId(); ?>,
+            id_second: 'lp_second-' + <?php echo $_deal->getId(); ?>,
+
+            label_day: 'lbl_lp_day-' + <?php echo $_deal->getId(); ?>,
+            label_hour: 'lbl_lp_hour-' + <?php echo $_deal->getId(); ?>,
+            label_minute: 'lbl_lp_minute-' + <?php echo $_deal->getId(); ?>,
+            label_second: 'lbl_lp_second-' + <?php echo $_deal->getId(); ?>,
+
+            label_day_value: '<?php //echo __('d') ?>',
+            label_hour_value: '<?php //echo __('h') ?>',
+            label_minute_value: '<?php //echo __('m') ?>',
+            label_second_value: '<?php //echo __('s') ?>'
+        };
+        require([
+            'jquery'
+        ], function () {
+            countDownSecond(todaydeal_server_time);
+
+            function listminicart(cellid, tomorrow) {
+
+                var urlpath = '<?php echo $this->getUrl('dailydeal/deal/ajaxdeal') . '?currenttime='; ?>' + tomorrow;
+                new Ajax.Request(urlpath, {
+                    method: "GET",
+                    onSuccess: function (resp) {
+                        $('cell-' + cellid).addTip(resp.responseText, {style: 'grouped'});
+                    }
+                });
+            }
+
+            function countDownSecond(obj) {
+
+                if (obj.second > 0) {
+                    obj.second--;
+
+                    setTimeout(function () {
+                        if (obj.callback != '') {
+                            obj.callback(obj);
+                        } else {
+                            showTime(obj);
+                        }
+                    }, 0);
+
+                    setTimeout(function () {
+                        countDownSecond(obj);
+                    }, 1000);
+                }
+            }
+
+            function showTime(obj) {
+
+                var seconds = Math.floor(obj.second);
+                var minutes = Math.floor(seconds / 60);
+                var hours = Math.floor(minutes / 60);
+                var days = Math.floor(hours / 24);
+
+                hours %= 24;
+                minutes %= 60;
+                seconds %= 60;
+
+                var str_days = wrapperTagSpan(insertOneZero(days));
+                var str_hours = wrapperTagSpan(insertOneZero(hours));
+                var str_minutes = wrapperTagSpan(insertOneZero(minutes));
+                var str_seconds = wrapperTagSpan(insertOneZero(seconds));
+
+                if (jQuery('#' + obj.label_day)) {
+                    if (obj.label_day_value) {
+                        jQuery('#' + obj.label_day).text(obj.label_day_value);
+                    } else {
+                        jQuery('#' + obj.label_day).text('<?php echo __('Days'); ?>');
+                    }
+                }
+                if (jQuery('#' + obj.label_hour)) {
+                    if (obj.label_hour_value) {
+                        jQuery('#' + obj.label_hour).text(obj.label_hour_value);
+                    } else {
+                        jQuery('#' + obj.label_hour).text('<?php echo __('Hours'); ?>');
+                    }
+                }
+                if (jQuery('#' + obj.label_minute)) {
+                    if (obj.label_minute_value) {
+                        jQuery('#' + obj.label_minute).text(obj.label_minute_value);
+                    } else {
+                        jQuery('#' + obj.label_minute).text('<?php echo __('Minutes'); ?>');
+                    }
+                }
+                if (jQuery('#' + obj.label_second)) {
+                    if (obj.label_second_value) {
+                        jQuery('#' + obj.label_second).text(obj.label_second_value);
+                    } else {
+                        jQuery('#' + obj.label_second).text('<?php echo __('Seconds'); ?>');
+                    }
+                }
+
+                if (jQuery('#' + obj.id_day)) jQuery('#' + obj.id_day).text(str_days);
+                if (jQuery('#' + obj.id_hour)) jQuery('#' + obj.id_hour).text(str_hours);
+                if (jQuery('#' + obj.id_minute)) jQuery('#' + obj.id_minute).text(str_minutes);
+                if (jQuery('#' + obj.id_second)) jQuery('#' + obj.id_second).text(str_seconds);
+
+                if (days <= 0) {
+                    if (jQuery('#' + obj.label_day)) jQuery('#' + obj.label_day).text('');
+                    if (jQuery('#' + obj.id_day)) jQuery('#' + obj.id_day).text('');
+                }
+            }
+
+            function insertOneZero(value) {
+                var result = '';
+
+                if (value < 10) {
+                    result += '0' + value;
+                } else {
+                    result += value;
+                }
+
+                return result;
+            }
+
+            function wrapperTagSpan(string) {
+                var result = '';
+
+                string.toString();
+
+                for (var i = 0; i < string.length; i++) {
+                    result += "" + string.charAt(i) + "";
+                }
+
+                return result;
+            }
+        });
+    </script>
+    <div class="clear"><span>&nbsp;</span></div>
+    <?php //if ( $_deal->checkDealQtyToShow($_product) && ( Mage::helper('dailydeal')->getConfigTodayDealShowDetail() || Mage::helper('dailydeal')->getConfigDisplayQuantity())) { ?>
+    <?php if ( $_deal->checkDealQtyToShow($_product) && ( $block->getConfigTodayDealShowDetail() || $block->getConfigDisplayQuantity())) { ?>
+        <div class="qty-deal">
+
+            <?php //if (Mage::helper('dailydeal')->getConfigTodayDealShowDetail()) { ?>
+            <?php if ($block->getConfigTodayDealShowDetail()) {
+                $_deal->processValueDiscountSaveBought(array('model_product' => $_product));
+                $_deal_info = $_deal->getData('value_discount_save_bought');?>
+                <div class="mw_dld_detail">
+                    <ul>
+                        <li>
+                            <span><?php //echo Mage::helper('dailydeal')->__('Discount') ?></span>
+                            <span><?php echo __('Discount') ?></span>
+                            <span class="mw_dld_detail_num"><?php echo $_deal_info['discount'] ?></span>
+                        </li>
+                        <li>
+                            <span><?php echo __('You Save') ?></span>
+                            <span class="mw_dld_detail_num"><?php echo $_deal_info['you_save'] ?></span>
+                        </li>
+                        <li>
+                            <span><?php echo __('Bought') ?></span>
+                            <span class="mw_dld_detail_num"><?php echo $_deal_info['bought'] ?></span>
+                        </li>
+                    </ul>
+                </div>
+            <?php } ?>
+
+
+            <?php //if (Mage::helper('dailydeal')->getConfigDisplayQuantity()) { ?>
+            <?php if ($block->getConfigDisplayQuantity()) { ?>
+                <span>
+							<?php
+                            if (($dealqty - $soldqty) > 10) {
+                                //echo Mage::helper('dailydeal')->renderDealQtyOnProductPage($dealqty - $soldqty);
+                                echo $block->renderDealQtyOnProductPage($dealqty - $soldqty);
+                            } elseif (($dealqty - $soldqty) <= 10 && ($dealqty - $soldqty) > 1) {
+//                                echo Mage::helper('dailydeal')->renderDealQtyOnProductPage($dealqty - $soldqty);
+                                echo $block->renderDealQtyOnProductPage($dealqty - $soldqty);
+                            } elseif (($dealqty - $soldqty) == 1) {
+//                                echo Mage::helper('dailydeal')->renderDealQtyOnProductPage($dealqty - $soldqty);
+                                echo $block->renderDealQtyOnProductPage($dealqty - $soldqty);
+                            }
+                            ?>
+						</span>
+            <?php } ?>
+
+        </div>
+    <?php } ?>
+
+<?php } ?>

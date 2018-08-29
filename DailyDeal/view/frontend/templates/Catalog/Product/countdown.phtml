@@ -1,0 +1,92 @@
+<?php $_product = $this->getData('product'); ?>
+<?php
+/**
+ * @var $blockList \MW\DailyDeal\Block\Showtabs\ListDeal
+ */
+$blockList = $this->getLayout()->createBlock('MW\DailyDeal\Block\Showtabs\ListDeal');
+$_deal = $blockList->loadByProductId($_product->getId());
+if ($_deal->getId()) {
+    ?>
+    <div class="mwdld_display_cate">
+        <?php
+        // show image
+        if ($blockList->getConfigIsShowImageCatalogList()) {
+            $url = $blockList->helperDailyDeal->getUrlImageCatalogList();
+            ?>
+            <img class="mwdld_img_sale" src="<?php echo $blockList->escapeUrl($url) ?>"
+                 alt="<?php echo __('sale'); ?>"/>
+        <?php } ?>
+
+        <div class="mwdld_category">
+            <div id="counter" class="counter">
+                <ul>
+                    <li>
+                        <div class="countdown_num"
+                             id="lp_day-<?php echo $blockList->escapeHtml($_deal->getDailydealId()) ?>"></div>
+                        <div id="lbl_lp_day-<?php echo $blockList->escapeHtml($_deal->getId()); ?>"></div>
+                    </li>
+                    <li>
+                        <div class="countdown_num"
+                             id="lp_hour-<?php echo $blockList->escapeHtml($_deal->getDailydealId()) ?>"></div>
+                        <div id="lbl_lp_hour-<?php echo $blockList->escapeHtml($_deal->getId()); ?>"></div>
+                    </li>
+                    <li>
+                        <div class="countdown_num"
+                             id="lp_minute-<?php echo $blockList->escapeHtml($_deal->getDailydealId()) ?>"></div>
+                        <div id="lbl_lp_minute-<?php echo $blockList->escapeHtml($_deal->getId()); ?>"></div>
+                    </li>
+                    <li>
+                        <div class="countdown_num"
+                             id="lp_second-<?php echo $blockList->escapeHtml($_deal->getDailydealId()) ?>"></div>
+                        <div id="lbl_lp_second-<?php echo $blockList->escapeHtml($_deal->getId()); ?>"></div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="mwdld_mess_cate">
+                <?php
+                $dealqty = $_deal->getDealQty();
+                $soldqty = $_deal->getSoldQty();
+
+                ?>
+                <?php if ($blockList->getConfigDisplayQuantity()) { ?>
+                    <?php
+                    if (($dealqty - $soldqty) > 10) {
+                        echo $blockList->helperDailyDeal->renderDealQtyOnCatalogPage($dealqty - $soldqty);
+                    } elseif (($dealqty - $soldqty) <= 10 && ($dealqty - $soldqty) > 1) {
+                        echo $blockList->helperDailyDeal->renderDealQtyOnCatalogPage($dealqty - $soldqty);
+                    } elseif (($dealqty - $soldqty) == 1) {
+                        echo $blockList->helperDailyDeal->renderDealQtyOnCatalogPage($dealqty - $soldqty);
+                    }
+                    ?>
+                <?php } ?>
+            </div>
+        </div>
+        <?php
+        $remain_second = 20 * 60 * 60 + 45 * 60;//strtotime($_deal->getEndDateTime()) - Mage::getModel('core/date')->timestamp();
+        ?>
+        <script type="text/javascript">
+            var todaydeal_server_time = {
+                second: <?php echo $remain_second; ?>,
+                callback: '',
+
+                id_day: 'lp_day-' + <?php echo $blockList->escapeHtml($_deal->getId()); ?>,
+                id_hour: 'lp_hour-' + <?php echo $blockList->escapeHtml($_deal->getId()); ?>,
+                id_minute: 'lp_minute-' + <?php echo $blockList->escapeHtml($_deal->getId()); ?>,
+                id_second: 'lp_second-' + <?php echo $blockList->escapeHtml($_deal->getId()); ?>,
+
+                label_day: 'lbl_lp_day-' + <?php echo $blockList->escapeHtml($_deal->getId()); ?>,
+                label_hour: 'lbl_lp_hour-' + <?php echo $blockList->escapeHtml($_deal->getId()); ?>,
+                label_minute: 'lbl_lp_minute-' + <?php echo $blockList->escapeHtml($_deal->getId()); ?>,
+                label_second: 'lbl_lp_second-' + <?php echo $blockList->escapeHtml($_deal->getId()); ?>,
+
+                label_day_value: '<?php echo __('d'); ?>',
+                label_hour_value: '<?php echo __('h'); ?>',
+                label_minute_value: '<?php echo __('m'); ?>',
+                label_second_value: '<?php echo __('s'); ?>'
+            };
+
+            countDownSecond(todaydeal_server_time);
+        </script>
+    </div>
+<?php } ?>
