@@ -7,4 +7,8 @@
     <event name="catalog_product_collection_load_after">
         <observer name="dailydeal_product_collection_after" instance="MW\DailyDeal\Observer\Frontend\CatalogProductCollectionLoadAfter" />
     </event>
+
+    <event name="sales_quote_item_qty_set_after" >
+        <observer name="dailydeal_sales_quote_item_qty_set_after" instance="MW\DailyDeal\Observer\Frontend\CheckQuoteItemQty" />
+    </event>
 </config>

@@ -20,11 +20,9 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null,
-        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null,
-        \Magento\Eav\Model\Config $eavConfig
+        \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
-        $this->eavConfig = $eavConfig;
     }
 
     /**
@@ -128,31 +126,31 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
         return $deal;
     }
 
-    /**
-     * Filter product status
-     * @param $store_id
-     * @return Collection
-     */
-    public function addProductStatusFilter($store_id)
-    {
-        $store_id_all = 0;
-        $code_id = $this->eavConfig->loadByCode('catalog_product', 'status')->getId();
-
-        $prefix = '';
-
-        $this->getSelect()->joinInner(
-            array( 'at_status_default' => $prefix .'catalog_product_entity_int'),
-            "(main_table.product_id = at_status_default.entity_id) AND (at_status_default.attribute_id = {$code_id}) AND (at_status_default.store_id = {$store_id_all})",
-            array('at_status.value')
-        );
-        $this->getSelect()->joinLeft(
-            array( 'at_status' => $prefix . 'catalog_product_entity_int'),
-            "(main_table.product_id = at_status.entity_id) AND (at_status.attribute_id = {$code_id}) AND (at_status.store_id = {$store_id})",
-            array('at_status.value')
-        );
-
-        $this->getSelect()->where(" (IF(at_status.value_id > 0, at_status.value, at_status_default.value) = '1')");
-
-        return $this;
-    }
+//    /**
+//     * Filter product status
+//     * @param $store_id
+//     * @return Collection
+//     */
+//    public function addProductStatusFilter($store_id)
+//    {
+//        $store_id_all = 0;
+////        $code_id = $this->eavConfig->loadByCode('catalog_product', 'status')->getId();
+//
+//        $prefix = '';
+//
+//        $this->getSelect()->joinInner(
+//            array( 'at_status_default' => $prefix .'catalog_product_entity_int'),
+//            "(main_table.product_id = at_status_default.entity_id) AND (at_status_default.attribute_id = {$code_id}) AND (at_status_default.store_id = {$store_id_all})",
+//            array('at_status.value')
+//        );
+//        $this->getSelect()->joinLeft(
+//            array( 'at_status' => $prefix . 'catalog_product_entity_int'),
+//            "(main_table.product_id = at_status.entity_id) AND (at_status.attribute_id = {$code_id}) AND (at_status.store_id = {$store_id})",
+//            array('at_status.value')
+//        );
+//
+//        $this->getSelect()->where(" (IF(at_status.value_id > 0, at_status.value, at_status_default.value) = '1')");
+//
+//        return $this;
+//    }
 }

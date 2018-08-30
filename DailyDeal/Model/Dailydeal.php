@@ -242,4 +242,40 @@ class Dailydeal extends \Magento\Framework\Model\AbstractModel
 
         return $listProductId;
     }
+
+    /**
+     * true : allow buy, false : not buy
+     * @param $model_product
+     * @param $model_deal
+     * @param $buy_qty
+     * @return boolean
+     */
+    public function checkSoldQty($model_product, $model_deal, $buy_qty)
+    {
+        $return = false;
+        if ($model_product->getData('type_id') == \MW\DailyDeal\Model\Status::TYPE_CONFIGURABLE ||
+            $model_product->getData('type_id') == \MW\DailyDeal\Model\Status::TYPE_GROUPED ||
+            $model_product->getData('type_id') == \Magento\Catalog\Model\Product\Type::TYPE_BUNDLE) {
+            // alow buy
+            $return = true;
+        }
+
+        if ($model_product->getData('type_id') == \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE ||
+            $model_product->getData('type_id') == \Magento\Catalog\Model\Product\Type::TYPE_VIRTUAL ||
+            $model_product->getData('type_id') == \Magento\Downloadable\Model\Product\Type::TYPE_DOWNLOADABLE) {
+            $dealqty = $model_deal->getData('deal_qty');
+            $soldqty = $model_deal->getData('sold_qty');
+
+            if ($dealqty == 0) {
+                $return = true;
+            }
+
+            if ($buy_qty <= ($dealqty - $soldqty)) {
+                // alow buy
+                $return = true;
+            }
+        }
+
+        return $return;
+    }
 }

@@ -23,7 +23,6 @@ class ListDeal extends \Magento\Catalog\Block\Product\ListProduct
     protected $dealSchecdulerCollectionFactory;
     protected $dealSchecdulerModel;
     protected $dailydealModel;
-    protected $dailydealModelFactory;
     public $helperConfig;
     public $helperDailyDeal;
     public $filterGroup;
@@ -45,7 +44,6 @@ class ListDeal extends \Magento\Catalog\Block\Product\ListProduct
         \MW\DailyDeal\Model\ResourceModel\Dealscheduler\CollectionFactory $dealSchedulerCollectionFactory,
         \MW\DailyDeal\Model\Dealscheduler $dealSchecdulerModel,
         \MW\DailyDeal\Model\Dailydeal $dailydealModel,
-        \MW\DailyDeal\Model\DailydealFactory $dailydealModelFactory,
         \MW\DailyDeal\Helper\Config $helperConfig,
         \MW\DailyDeal\Helper\Data $helperDailyDeal,
         \Magento\Framework\Api\Search\FilterGroup $filterGroup,
@@ -66,7 +64,6 @@ class ListDeal extends \Magento\Catalog\Block\Product\ListProduct
         $this->dealSchecdulerCollectionFactory = $dealSchedulerCollectionFactory;
         $this->dealSchecdulerModel = $dealSchecdulerModel;
         $this->dailydealModel = $dailydealModel;
-        $this->dailydealModelFactory = $dailydealModelFactory;
         $this->helperConfig = $helperConfig;
         $this->helperDailyDeal = $helperDailyDeal;
         $this->filterGroup = $filterGroup;
@@ -95,6 +92,7 @@ class ListDeal extends \Magento\Catalog\Block\Product\ListProduct
     protected function _getProductCollection()
     {
         if (is_null($this->_productCollection)) {
+
             $store_id = 1;
             $currenttime = date('Y-m-d H:i:s', time());
 
@@ -187,27 +185,27 @@ class ListDeal extends \Magento\Catalog\Block\Product\ListProduct
     public function getProducts()
     {
         $listProductIdDeal = $this->dailydealModel->getListActiveDeal();
-        $dealModel = $this->dailydealModel;
-        foreach ($listProductIdDeal as $productId) {
-            $productModel = $this->productModel->load($productId);
-//            $p = $productModel->load($productId);
-            $productName = $productModel->getName();
-//            if ($productModel->getTypeId() == 'simple') {
-                $_deal = $dealModel->loadByProductId($productId);
-                $_deal->setData('cur_product', $productModel->getName())
-//                    ->setData('product_sku', $productModel->getSku())
-                    ->setData('description', $productModel->getTypeId())
-                    ->setData('product_price', $productModel->getPrice());
-//            }
-
-                $_deal->save();
-        }
+//        $dealModel = $this->dailydealModel;
+//        foreach ($listProductIdDeal as $productId) {
+//            $productModel = $this->productModel->load($productId);
+////            $p = $productModel->load($productId);
+//            $productName = $productModel->getName();
+////            if ($productModel->getTypeId() == 'simple') {
+//                $_deal = $dealModel->loadByProductId($productId);
+//                $_deal->setData('cur_product', $productModel->getName())
+////                    ->setData('product_sku', $productModel->getSku())
+//                    ->setData('product_sku', $productModel->getTypeId())
+//                    ->setData('product_price', $productModel->getPrice());
+////            }
+//
+//                $_deal->save();
+//        }
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $collection */
         $collection = $this->productCollectionFactory->create();
         //get values of current page. if not the param value then it will set to 1
         $page = ($this->getRequest()->getParam('p')) ? $this->getRequest()->getParam('p') : 1;
         //get values of current limit. if not the param value then it will set to 1
-        $pageSize = ($this->getRequest()->getParam('product_list_limit')) ? $this->getRequest()->getParam('product_list_limit') : 8;
+        $pageSize = ($this->getRequest()->getParam('product_list_limit')) ? $this->getRequest()->getParam('product_list_limit') : 9;
 
         $collection->addAttributeToSelect('*')
             ->addFieldToFilter('entity_id', ['in' => $listProductIdDeal])
@@ -228,18 +226,20 @@ class ListDeal extends \Magento\Catalog\Block\Product\ListProduct
             }
         }
 
-        if ($this->getRequest()->getParam('product_list_order') == 'special_price') {
+        if ($this->getRequest()->getParam('product_list_order') == 'deal_price') {
             if ($this->getRequest()->getParam('product_list_dir') == 'desc') {
-                $collection->addAttributeToSelect('*')->setOrder('special_price', 'DESC');
+                $collection->addAttributeToSelect('*')->setOrder('price', 'DESC');
+                \Zend_Debug::dump("DESC");
             } else {
-                $collection->addAttributeToSelect('*')->setOrder('special_price', 'ASC');
-                // or create new function to set order
+                $collection->addAttributeToSelect('*')->setOrder('price', 'ASC');
+
+                \Zend_Debug::dump("ASC");
             }
         }
 //        foreach ($collection as $item) {
-//            \Zend_Debug::dump($item->getSpecialPrice());
+////            \Zend_Debug::dump($item->getPrice());
+//            \Zend_Debug::dump($item->getFinalPrice());
 //        }
-
         $collection->getSelect()->assemble();
         $collection->getSelect()->__toString();
         echo $collection->getSelect();
@@ -251,9 +251,9 @@ class ListDeal extends \Magento\Catalog\Block\Product\ListProduct
         $toolbar = $this->getToolbarBlock();
 
         $toolbar->setAvailableOrders(array());  // clear
-        $toolbar->addOrderToAvailableOrders('end_date_time', __('Time'));
+        $toolbar->addOrderToAvailableOrders('end_date_time', __('Deal Time'));
         $toolbar->addOrderToAvailableOrders('name', __('Name'));
-        $toolbar->addOrderToAvailableOrders('special_price', __('Price'));
+        $toolbar->addOrderToAvailableOrders('deal_price', __('Deal Price'));
         $toolbar->setDefaultDirection('asc');
         $collection = $this->_getProductCollection();
         $toolbar->setCollection($collection);

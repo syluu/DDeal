@@ -60,21 +60,21 @@ class Past extends \Magento\Catalog\Block\Product\ListProduct
      *
      * @return AbstractCollection
      */
-    public function getLoadedProductCollection()
-    {
-        return $this->_getProductCollection();
-    }
+//    public function getLoadedProductCollection()
+//    {
+//        return $this->_getProductCollection();
+//    }
 
     /**
      * Retrieve loaded category collection
      *
      * @return \Magento\Eav\Model\Entity\Collection\AbstractCollection
      */
-    protected function _getProductCollection()
-    {
-        $productCollection = parent::_getProductCollection();
-        return $productCollection;
-    }
+//    protected function _getProductCollection()
+//    {
+//        $productCollection = parent::_getProductCollection();
+//        return $productCollection;
+//    }
 
     public function getPastDeals()
     {

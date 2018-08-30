@@ -89,4 +89,13 @@ class Status
     const SEND_MAIL_ADMIN_NOTIFICATION_DISABLE = 0;
     const SEND_MAIL_ADMIN_NOTIFICATION_ENABLE = 1;
 
+    const TYPE_SIMPLE = 'simple';
+
+    const TYPE_BUNDLE = 'bundle';
+
+    const TYPE_VIRTUAL = 'virtual';
+
+    const TYPE_GROUPED = 'grouped';
+
+    const TYPE_CONFIGURABLE = 'configurable';
 }
