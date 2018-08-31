@@ -202,22 +202,7 @@ class ListDeal extends \Magento\Catalog\Block\Product\ListProduct
 //        }
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $collection */
         $collection = $this->productCollectionFactory->create();
-        //get values of current page. if not the param value then it will set to 1
-        $page = ($this->getRequest()->getParam('p')) ? $this->getRequest()->getParam('p') : 1;
-        //get values of current limit. if not the param value then it will set to 1
-        $pageSize = ($this->getRequest()->getParam('product_list_limit')) ? $this->getRequest()->getParam('product_list_limit') : 9;
 
-        $collection->addAttributeToSelect('*')
-            ->addFieldToFilter('entity_id', ['in' => $listProductIdDeal])
-//            ->setPageSize(9)
-            ->getSelect();
-        $collection->setPageSize($pageSize);
-        $collection->setCurPage($page);
-//        $collection->setPageSize(5);
-        $collection->joinAttribute('status', 'catalog_product/status', 'entity_id', null, 'inner');
-//        $collection->joinAttribute('visibility', 'catalog_product/visibility', 'entity_id', null, 'inner');
-//        $collection->addAttributeToFilter('status', ['in' => $this->productStatus->getVisibleStatusIds()])
-//            ->addAttributeToFilter('visibility', ['in' => $this->productVisibility->getVisibleInSiteIds()]);
         if ($this->getRequest()->getParam('product_list_order') == 'name') {
             if ($this->getRequest()->getParam('product_list_dir') == 'desc') {
                 $collection->addAttributeToSelect('*')->setOrder('name', 'DESC');
@@ -228,14 +213,28 @@ class ListDeal extends \Magento\Catalog\Block\Product\ListProduct
 
         if ($this->getRequest()->getParam('product_list_order') == 'deal_price') {
             if ($this->getRequest()->getParam('product_list_dir') == 'desc') {
-                $collection->addAttributeToSelect('*')->setOrder('price', 'DESC');
-                \Zend_Debug::dump("DESC");
+                $collection->addAttributeToSelect('special_price')->setOrder('special_price', 'DESC');
             } else {
-                $collection->addAttributeToSelect('*')->setOrder('price', 'ASC');
-
-                \Zend_Debug::dump("ASC");
+                $collection->addAttributeToSelect('special_price')->setOrder('special_price', 'ASC');
             }
         }
+
+        //get values of current page. if not the param value then it will set to 1
+        $page = ($this->getRequest()->getParam('p')) ? $this->getRequest()->getParam('p') : 1;
+        //get values of current limit. if not the param value then it will set to 1
+        $pageSize = ($this->getRequest()->getParam('product_list_limit')) ? $this->getRequest()->getParam('product_list_limit') : 9;
+
+        $collection->addAttributeToSelect('*')
+            ->addFieldToFilter('entity_id', ['in' => $listProductIdDeal])
+            ->getSelect();
+        $collection->setPageSize($pageSize);
+        $collection->setCurPage($page);
+//        $collection->setPageSize(5);
+        $collection->joinAttribute('status', 'catalog_product/status', 'entity_id', null, 'inner');
+//        $collection->joinAttribute('visibility', 'catalog_product/visibility', 'entity_id', null, 'inner');
+//        $collection->addAttributeToFilter('status', ['in' => $this->productStatus->getVisibleStatusIds()])
+//            ->addAttributeToFilter('visibility', ['in' => $this->productVisibility->getVisibleInSiteIds()]);
+
 //        foreach ($collection as $item) {
 ////            \Zend_Debug::dump($item->getPrice());
 //            \Zend_Debug::dump($item->getFinalPrice());

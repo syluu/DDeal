@@ -278,4 +278,16 @@ class Dailydeal extends \Magento\Framework\Model\AbstractModel
 
         return $return;
     }
+
+    public function insertOrderId($order_id)
+    {
+        $temp_order_ids = $this->getData('order_id');
+        $temp_order_ids[] = $order_id;
+
+        $order_ids = array_filter($temp_order_ids);
+
+        $this->setData('order_id', $order_ids);
+
+        return $this;
+    }
 }
